@@ -1,0 +1,55 @@
+## PRACTICE 1_Pandas_Dataframe function_iloc, ix ##
+--------------------------------------------------------
+
+# iloc: i as integer整數 loc as location位置。
+# .iloc[]与loc一样，中括号里面也是先行(ROW)后列(COLUMN)，行列标签用逗号分割
+# 就是一種用整數位置做為基準去選擇的Pandas API
+# 以下以步驟方式進行練習 
+
+# 先設立一個資料集
+mydict = [
+{'a': 1, 'b': 2, 'c': 3, 'd': 4},
+{'a': 100, 'b': 200, 'c': 300, 'd': 400},
+{'a': 1000, 'b': 2000, 'c': 3000, 'd': 4000 }
+]
+
+
+# 轉為df資料
+import pandas as pd
+df = pd.DataFrame(mydict)
+print(df)
+
+# 拿 0 row （列）
+df.iloc[0]
+
+# 0 and  1 row
+df.iloc[[0, 1]]
+
+# 從一開始到 第 3 row
+df.iloc[:3]
+
+# 用array 布林是否來決定那個row要，這裡是0,2 row true, 就拿這兩個row
+df.iloc[[True, False, True]] #對應到ROW順序0,1(FALSE),2
+
+# 也可以用lamda來決定。這裡決定要拿取資料集（x）的index可以被2整除的row
+df.iloc[lambda x: x.index % 2 == 0]
+
+# 除了row（列）, 也可以指定 col（行）
+df.iloc[0, 1] # 0 row 1 col
+
+# 0 and 2 row, 1 and 3 col
+df.iloc[[0, 2], [1, 3]] # 矩陣的相對位置 [ROW, COLUMN]
+
+# 1 ~ 3 row , 0 ~ 3 col
+df.iloc[1:3, 0:3]
+
+# all row with 0 and 1 col ---布林邏輯決定結果
+df.iloc[:, [True, False, True, False]]
+
+# all row with 0 and 2 col
+df.iloc[:, lambda df: [0, 2]]
+
+# .ix 它既可以根据"行列标签"又可以根据"行列数"
+data = ["a",100,1000], "q", "qk", ["b",200,2000],"h", "hk"
+data.ix[0,3]
+
