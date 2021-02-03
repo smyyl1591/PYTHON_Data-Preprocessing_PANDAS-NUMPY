@@ -1,0 +1,348 @@
+
+## PRACTICE 1_Pandas 基本功能 ##
+ref 1: https://oranwind.org/python-pandas-ji-chu-jiao-xue/ 
+REF 2: https://ithelp.ithome.com.tw/articles/10185922
+---------------------------------------------------------------
+**Pandas 是 python 的一個數據分析 lib，2009 年底開源出來，提供高效能、簡易使用的資料格式(Data Frame)讓使用者可以快速操作及分析資料，主要特色描述如下**：
+
+1. 在異質數據的讀取、轉換和處理上，都讓分析人員更容易處理，例如：從列欄試算表中找到想要的值。
+2. Pandas 提供兩種主要的資料結構，Series 與 DataFrame。
+   Series 顧名思義就是用來處理**時間序列相關的資料**(如感測器資料等)，主要為建立索引的一維陣列。
+     - Panel：用來處理有資料及索引、列索引與欄標籤的三維資料集
+   DataFrame 則是用來處理**結構化(Table like)的資料**，有列索引與欄標籤的二維資料集，例如關聯式資料庫、CSV 等等。
+3. 透過載入至 Pandas 的資料結構物件後，可以透過結構化物件所提供的方法，來快速地進行資料的前處理，如資料補值，空值去除或取代等。
+4. 更多的輸入來源及輸出整合性，例如：可以從資料庫讀取資料進入 Dataframe，也可將處理完的資料存回資料庫。
+
+
+------examples------
+
+# 安裝pandas 
+pip install pandas  
+
+
+# 讀取 CSV File
+import pandas as pd                 # 引用套件並縮寫為 pd  
+df = pd.read_csv('shop_list.csv')  
+print(df)
+
+
+# 讀取 HTML
+import pandas as pd                 # 引用套件並縮寫為 pd  
+dfs = pd.read_html('http://rate.bot.com.tw/xrt?Lang=zh-TW')  
+dfs[0]  
+
+
+# Pandas資料可以的類型如下：
+- array
+- dictionary
+- 單一資料
+
+import pandas as pd                      # 引用套件並縮寫為 pd
+select = pd.Series(data, index = idx)    # 將資料讀入 series 方法中
+
+❖ 資料為 Array:
+import pandas as pd                      # 引用套件並縮寫為 pd
+cars = ["BMW", "BENZ", "Toyota", "Nissan", "Lexus"]
+
+select = pd.Series(cars)  
+print(select)
+------OUTPUT------
+0 BMW
+1 BENZ
+2 Toyota
+3 Nissan
+4 Lexus
+dtype: object
+
+
+❖ 資料為 Dictionary:
+import pandas as pd
+dict = {  
+    "factory": "Taipei",
+    "sensor1": "1",
+    "sensor2": "2",
+    "sensor3": "3",
+    "sensor4": "4",
+    "sensor5": "5"
+}
+
+select = pd.Series(dict, index = dict.keys())       # 排序與原 dict 相同  
+print(select[0])  
+print("=====")  
+
+print(select['sensor1'])  
+print("=====")  
+
+print(select[[0, 2, 4]])  ---???
+print("=====")  
+
+print(select[['factory', 'sensor1', 'sensor3']])  
+
+------OUTPUT------
+Taipei
+=====
+1
+=====
+factory  Taipei
+sensor1   1
+=====
+sensor2   2
+sensor4   4
+dtype: object
+=====
+factory  Taipei
+sensor1    1
+sensor3    3
+dtype: object
+
+
+
+❖ 建立 Dataframe: 
+
+(1) 資料為 Dictionary
+
+import pandas as pd            # 引用套件並縮寫為 pd
+groups = ["Movies", "Sports", "Coding", "Fishing", "Dancing", "cooking"]  
+num = [46, 8, 12, 12, 6, 58]
+
+dict = {"groups": groups,  
+        "num": num
+       }
+
+select_df = pd.DataFrame(dict)
+
+print(select_df)                # 看看資料框的外觀 
+
+-----output-----
+    groups   num
+0   Movies   46
+1   Sports    8
+2   Coding   12
+3   Fishing  12
+4   Dancing   6
+5   cooking  58
+
+
+(2) 資料為 Array
+
+arr = groups = [["Movies", 46],["Sports", 8], ["Coding", 12], ["Fishing",12], ["Dancing",6], ["cooking",8]]
+df = pd.DataFrame(arr, columns = ["name", "num"]) # 指定欄標籤名稱  
+
+print(df)  
+
+-----output-----
+    name   num
+0   Movies   46
+1   Sports    8
+2   Coding   12
+3   Fishing  12
+4   Dancing   6
+5   cooking  58
+
+
+(3) 在dataframe裡看欄位的指令:
+.shape
+.describe()
+.head()
+.tail()
+.columns
+.index
+.info()
+---example---
+select_df = pd.DataFrame(dict)
+
+print(select_df.shape)      # 回傳列數與欄數  
+print("---")  
+print(select_df.describe()) # 回傳描述性統計  
+print("---")  
+print(select_df.head(3))    # 回傳前三筆觀測值  
+print("---")  
+print(select_df.tail(3))    # 回傳後三筆觀測值  
+print("---")  
+print(select_df.columns)    # 回傳欄位名稱  
+print("---")  
+print(select_df.index)      # 回傳 index  
+print("---")  
+print(select_df.info)       # 回傳資料內容  
+
+
+---
+❖ 資料為單一資料:
+
+import pandas as pd
+
+cars = "BENZ"  
+select = pd.Series(cars, index = range(3))  
+print(select)  
+
+-----Output-----
+0 BENZ
+1 BENZ
+2 BENZ
+dtype: object
+--------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
+
+## PRACTICE 2_Pandas_Dataframe function_iloc, ix ##
+---------------------------------------------------------------
+
+# iloc: i as integer整數 loc as location位置。
+# .iloc[]与loc一样，中括号里面也是先行(ROW)后列(COLUMN)，行列标签用逗号分割
+# 就是一種用整數位置做為基準去選擇的Pandas API
+# 以下以步驟方式進行練習 
+
+
+# 可以透過下列方法選擇元素
+  1. 中括號 [] 選擇元素
+  2. "."將變數當作屬性選擇
+  3. ".loc", ".iloc" 為方法選擇
+  4. 使用布林值篩選
+ 
+--例1: 中括號 []
+import pandas as pd
+
+groups = ["Movies", "Sports", "Coding", "Fishing", "Dancing", "cooking"]  
+num = [46, 8, 12, 12, 6, 58]
+
+dict = {"groups": groups,  
+        "num": num
+       }
+
+select_df = pd.DataFrame(dict)
+
+print(select_df.iloc[0, 1])      # 第一列第二欄：組的人數  
+print("---")  
+
+print(select_df.iloc[0:1,:])     # 第一列：組的組名與人數  
+print("---")  
+
+print(select_df.iloc[:,1])       # 第二欄：各組的人數  
+print("---")  
+
+print(select_df["num"])          # 各組的人數  
+print("---")  
+
+print(select_df.num)             # 各組的人數  
+
+
+--例2: "."將變數當作屬性選擇, 使用布林值篩選
+out_df = select_df[select_df.loc[:,"num"] > 10] # 選出人數超過 10 的群組  
+print(out_df) 
+---------------------------------------------------------------------------
+
+# 資料排序:
+
+.sort_index()
+.sort_values()
+
+----EXAMPLE 1----
+import pandas as pd               # 引用套件並縮寫為 pd
+
+groups = ["Movies", "Sports", "Coding", "Fishing", "Dancing", "cooking"]  
+num = [46, 8, 12, 12, 6, 58]
+
+dict = {"groups": groups,  
+        "num": num
+        }
+
+select_df = pd.DataFrame(dict)
+select_df.sort_index(axis = 0, ascending = True)     # 透過索引值做排序，axis 可以指定第幾欄，ascending 用於設定升冪或降密  
+
+
+----EXAMPLE 2----
+select_df = pd.DataFrame(dict)
+select_df.sort_values(by = 'num')     #透過指定欄位的數值排序  
+
+
+---------------------------------------------------------------------------
+
+# 是否為空值: 
+- isnull()
+- notnull()
+
+
+# 讀取後放入 DataFrame:
+select_df = pd.DataFrame(df)
+
+print(select_df.ix[:, "shop name"].isnull())     # 判斷哪些店名是遺失值  
+print("---")  
+
+print(select_df.ix[:, "maket size"].notnull())   # 判斷哪些市場規模不是遺失值
+
+**可以透過 ix 方法（利用索引值或欄位）選擇 data frame 區段
+
+
+
+# 處理空值: 
+- dropna()
+- fillna()
+
+---以下為做法---
+# 讀取 CSV File
+import pandas as pd                 # 引用套件並縮寫為 pd  
+df = pd.read_csv('shop_list2.csv')  
+print(df)
+
+select_df = pd.DataFrame(df)        # 讀取後放入 DataFrame
+
+drop_value = select_df.dropna()     # 有遺失值的觀測值都刪除  
+print(drop_value)  
+print("---")  
+
+
+filled_value = select_df.fillna(0)   # 有遺失值的觀測值填補 0  
+print(filled_value)  
+print("---")  
+
+filled_value_column = select_df.fillna({"shop name": "NULL", "maket size": 0})   # 依欄位填補遺失值  
+print(filled_value_column) 
+
+
+---------------------------------------------------------------------------
+# 先設立一個資料集
+mydict = [
+{'a': 1, 'b': 2, 'c': 3, 'd': 4},
+{'a': 100, 'b': 200, 'c': 300, 'd': 400},
+{'a': 1000, 'b': 2000, 'c': 3000, 'd': 4000 }
+]
+
+
+# 轉為df資料
+import pandas as pd
+df = pd.DataFrame(mydict)
+print(df)
+
+# 拿 0 row （列）
+df.iloc[0]
+
+# 0 and  1 row
+df.iloc[[0, 1]]
+
+# 從一開始到 第 3 row
+df.iloc[:3]
+
+# 用array 布林是否來決定那個row要，這裡是0,2 row true, 就拿這兩個row
+df.iloc[[True, False, True]] #對應到ROW順序0,1(FALSE),2
+
+# 也可以用lamda來決定。這裡決定要拿取資料集（x）的index可以被2整除的row
+df.iloc[lambda x: x.index % 2 == 0]
+
+# 除了row（列）, 也可以指定 col（行）
+df.iloc[0, 1] # 0 row 1 col
+
+# 0 and 2 row, 1 and 3 col
+df.iloc[[0, 2], [1, 3]] # 矩陣的相對位置 [ROW, COLUMN]
+
+# 1 ~ 3 row , 0 ~ 3 col
+df.iloc[1:3, 0:3]
+
+# all row with 0 and 1 col ---布林邏輯決定結果
+df.iloc[:, [True, False, True, False]]
+
+# all row with 0 and 2 col
+df.iloc[:, lambda df: [0, 2]]
+
+# .ix 它既可以根据"行列标签"又可以根据"行列数"
+data = ["a",100,1000], "q", "qk", ["b",200,2000],"h", "hk"
+data.ix[0,3]
+
