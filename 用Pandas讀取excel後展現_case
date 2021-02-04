@@ -1,0 +1,34 @@
+
+# ref: https://ithelp.ithome.com.tw/questions/10201997
+
+#將路徑下副檔名xlsx的取出
+import openpyxl                   # 試試看套件openpyxl
+path_domestic = os.path.abspath(os.getcwd()) + '\globle'
+non_domestic  = glob.glob(os.path.join(path_domestic, '*.xlsx'))
+
+
+#寫迴圈並計算所需要的資料
+for file in non_domestic:
+data = pd.read_excel(file)
+TQ = data["Qty"].sum()
+amount = data['Px'] * data['Qty']
+data['Amount'] = amount #新增一欄
+
+
+#新增一列並寫到data1
+new = pd.DataFrame({'Security': '',
+'交易所代碼': '',
+'Qty': TQ,
+'Px': '',
+'Fill Time': '',
+'Exec Brkr': '',
+'Maker/Taker': '',
+'Amount': TAmount,
+'N': Aver_P}, index=[1])
+data1 = data.append(new, ignore_index=True)
+
+
+#取得股票名稱
+name = str(data["Security"][1])
+print(data1)
+
