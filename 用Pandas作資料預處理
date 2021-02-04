@@ -1,0 +1,5 @@
+# 
+
+import pandas as pd
+data = pd.read_csv('okok.csv')  # 讀取csv，存入data變數
+data.drop_duplicates(keep='first', inplace=False)  # 刪除重複
