@@ -1,0 +1,48 @@
+
+# ref: https://ithelp.ithome.com.tw/questions/10195806 
+# 預期把excel 中人名分開(以,為分隔符號)
+
+
+import pandas as pd
+import numpy as np
+
+def memberWithoutMe(member,me):
+    tmpStr = '與「'
+    count = 0
+    for i in member:
+        if i != me:
+            if count>0:
+                tmpStr = tmpStr + "，"
+            tmpStr = tmpStr + i
+        count=count+1
+    tmpStr = tmpStr + '」合作'
+    return tmpStr
+
+Location='sample.xlsx'        # 可以自行作個範例excel來測試看看
+df = pd.read_excel(Location)   
+
+new_sample0=df[~df['小組成員'].str.contains("，")]
+#小組成員只有一人的先撈出來並處理nan及得獎人員欄位
+
+new_sample0=new_sample0.replace(np.nan, '', regex=True)
+new_sample0['得獎人員']=new_sample0['小組成員']
+
+
+
+df_hasMembers = df[df['小組成員'].str.count('，')>0]
+#小組成員不只一人的撈出來跑廻圈處理，以下是廻圈範例:
+
+tmp=[]
+for index, row in df_hasMembers.iterrows():
+    tmpSN=row['編號']
+    tmpGrp=row['組別']
+    tmpMember=str(row['小組成員']).split("，")
+    for i in tmpMember:
+        tmp.append({
+            '編號':tmpSN, '組別':tmpGrp,
+            '小組成員':row['小組成員'],
+            '得獎人員':i,
+            '得獎備註':memberWithoutMe(tmpMember,i)
+        })
+result=new_sample0.append(pd.DataFrame(tmp))
+print(result.sort_values(by=['組別','編號']))
