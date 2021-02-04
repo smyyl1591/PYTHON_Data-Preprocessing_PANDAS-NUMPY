@@ -1,4 +1,5 @@
-# 
+
+# 用Pandas 去除重複值
 
 import pandas as pd
 data = pd.read_csv('okok.csv')  # 讀取csv，存入data變數
