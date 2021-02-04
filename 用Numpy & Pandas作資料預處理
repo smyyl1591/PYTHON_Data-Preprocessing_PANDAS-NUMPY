@@ -1,0 +1,138 @@
+
+# 資料稽核的內容主要包括以下四個方面：
+1. 準確性稽核。主要是從資料的真實性與精確性角度檢查資料，其稽核的重點是檢查調查過程中所發生的誤差。 
+2. 適用性稽核。主要是根據資料的用途，檢查資料解釋說明問題的程度。具體包括資料與調查主題、與目標總體的界定、與調查專案的解釋等是否匹配。
+3. 及時性稽核。主要是檢查資料是否按照規定時間報送，如未按規定時間報送，就需要檢查未及時報送的原因。
+4. 一致性稽核。主要是檢查資料在不同地區或國家、在不同的時間段是否具有可比性
+  **ref: https://www.itread01.com/content/1546463902.html 
+
+# 資料篩選：
+1. 將某些不符合要求的資料或有明顯錯誤地資料予以剔除；
+2. 將符合某種特定條件的資料篩選出來，對不符合特定條件的資料予以剔除
+
+# 資料排序：按照一定順序將資料排列，以便於研究者通過瀏覽資料發現一些明顯的特徵或趨勢，找到解決問題的線索；在某些場合，排序本身就是分析的目的之一
+
+# 資料清理：主要是達到如下目標 - 格式標準化，異常資料清除，錯誤糾正，重複資料的清除
+
+
+# 資料預處理說明: 分為6步
+- 第一步：匯入NumPy和Pandas庫。
+         NumPy和Pandas是每次都要匯入的庫，其中Numpy包含了數學計算函式，Pnadas是一個用於匯入和管理資料集(Data Sets)的類庫。
+
+- 第二步：匯入資料集。
+         資料集一般都是.csv格式，csv檔案以文字形式儲存資料。每一行資料是一條記錄。
+         我們使用pandas類庫的read_csv方法讀取本地的csv檔案作為一個dataframe。然後從datafram中分別建立自變數和因變數的矩陣和向量。
+
+- 第三步：處理缺失的資料。
+         我們得到的資料很少是完整的。資料可能因為各種原因丟失，為了不降低機器學習模型的效能，需要處理資料。
+         我們可以用整列的平均值或者中間值替換丟失的資料。我們用sklearn.preprocessing庫中的Inputer類完成這項任務。
+
+- 第四步：對分類資料進行編碼。
+         分類資料指的是含有標籤值而不是數字值得變數。取值範圍通常是固定的。例如“YES”和“NO”不能用於模型的數學計算，所以需要編碼成數字。
+         為數顯這一功能，我們從sklearn.preprocessing庫中匯入LabelEncoder類。
+
+- 第五步：拆分資料集為測試集合和訓練集合。
+         把資料集拆分成兩個，一個是用來訓練模型的訓練集合，另一個是用來驗證模型的測試集合。兩種比例一般是80:20。我們匯入sklearn.crossvalidation庫中的train_test_split()方法。
+
+- 第六步：特徵縮放。
+         大部分模型演算法使用兩點間的歐式近距離表示，但此特徵在幅度、單位和範圍姿態問題上變化很大。
+         在距離計算中，高幅度的特徵比低幅度特徵權重大。可用特徵標準化或Z值歸一化解決。匯入sklearn.preprocessing庫的StandardScalar類。
+         
+# ref 1: 機器學習100天——資料預處理(第一天) https://www.itread01.com/eyxf.html 
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+# step 1: 匯入類庫
+ import numpy as np
+ import pandas as pd
+ 
+# step 2: 匯入資料集
+ dataset = pd.read_csv('Data.csv')
+ X = dataset.iloc[ : , :-1].values
+ Y = dataset.iloc[ : , 3].values
+ 
+# step 3: 處理缺失的資料
+ from sklearn.preprocessing import Imputer
+ imputer = Imputer(missing_values = "NaN", strategy = "mean", axis = 0)
+ imputer = imputer.fit(X[ : , 1:3])
+ X[ : , 1:3] = imputer.transform(X[ : , 1:3])
+ 
+# Step 4:編碼分類資料
+ from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+ labelencoder_X = LabelEncoder()
+ X[ : , 0] = labelencoder_X.fit_transform(X[ : , 0])
+ Creating a dummy variable
+ 
+ onehotencoder = OneHotEncoder(categorical_features = [0])
+ X = onehotencoder.fit_transform(X).toarray()
+ labelencoder_Y = LabelEncoder()
+ Y =labelencoder_Y.fit_transform(Y)
+ 
+# Step 5: 切分資料整合訓練資料和測試資料
+ from sklearn.cross_validation import train_test_split
+ X_train, X_test, Y_train, Y_test = train_test_split( X , Y , test_size = 0.2, random_state = 0)
+ 
+# Step 6: 特徵縮放
+ from sklearn.preprocessing import StandardScaler
+ sc_X = StandardScaler()
+ X_train = sc_X.fit_transform(X_train)
+ X_test = sc_X.fit_transform(X_test)
+
+
+------------------------------------------------------------------------------
+# 用Pandas 去除重複值
+
+import pandas as pd
+data = pd.read_csv('okok.csv')  # 讀取csv，存入data變數
+data.drop_duplicates(keep='first', inplace=False)  # 刪除重複
+
+------------------------------------------------------------------------------
+# Data Preprocessing template 
+# ref 2: [機器學習筆記]數據預處理 https://medium.com/@doremi31618/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98-%E6%95%B8%E6%93%9A%E9%A0%90%E8%99%95%E7%90%8601-ae90853978da 
+
+# Importing the libraries  載入套件
+import numpy as np
+import matplotlib.pyplot as plt 
+import pandas as pd
+
+# Importing the dataset   讀進資料
+dataset = pd.read_csv('./Data.csv')
+X = dataset.iloc[:, :-1 ].values
+Y = dataset.iloc[:, 3].values
+
+#taking care of missing data  處理遺漏值
+from sklearn.preprocessing import Imputer
+
+# Imputer : 專門處理數據缺失的類別
+# 這邊可以comment+i來查看函式的解說
+imputer = Imputer(missing_values = 'NaN', strategy = 'mean', axis = 0)
+imputer = imputer.fit(X[:, 1:3])#1:3 = 1~2
+X[:, 1:3] = imputer.transform(X[:, 1:3])
+
+
+# 為什麼要分類數據？因為在做機器學習時我們必須要有一個方法來標示每一類的數據
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder #將不同組的名城轉變成數字類別
+labelencoder_X = LabelEncoder()
+X[:,0] = labelencoder_X.fit_transform(X[:,0])
+
+# 執行到這邊我們將所有國家編碼為數字，但是在機器學習中編碼的順序並沒有任何意義，所以我們將在執行以下動作
+onehotencoder = OneHotEncoder( categorical_features = [0])
+X = onehotencoder.fit_transform(X).toarray()
+
+labelencoder_y = LabelEncoder()
+y = labelencoder_y.fit_transform(y)
+
+
+
+# splitting the dataset into the Training set and Test set 
+# 什麼是數據集、測試集，我們又是為了什麼要把數據分成兩個部分呢？
+# 測試集：用來檢驗機器學習成果的數據
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(Ｘ, y, test_size =0.2, random_state = 0)
+
+
+#Feature scaling 特徵縮放
+from sklearn.preprocessing import StandardScaler
+sc_X = StandardScaler()
+X_train = sc_X.fit_transform(X_train)
+X_test = sc_X.transform(X_test)
+
